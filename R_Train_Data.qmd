@@ -2,6 +2,94 @@
 title: "R_Train_Data"
 ---
 
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(tidymodels)
+```
+
 ## 1. **Model Coefficients for Simple Linear Regression in R using mtcars**
 
 [Ref:](https://medium.com/@josef.waples/introduction-to-linear-regression-in-r-b718077614a0)
+
+```{r}
+data("mtcars")
+View(mtcars)
+```
+
+### Scatterplot:
+
+First creating a scatterplot without the line of best fit gives us an opportunity to test our intuition.
+
+```{r}
+mtcars <- mtcars
+ggplot(data = mtcars, aes(x = wt, y = mpg)) + 
+  geom_point() +
+  labs(title = "Mtcars", subtitle = "Scatter Plot") +
+  theme(plot.title = element_text(face = "bold"))
+```
+
+But this does open the door to a variety of more nuanced questions. Some examples include:
+
+-   How well would a linear model explain the variability that we would see in miles per gallon?
+
+-   Is a linear model even a good fit, given the curvature, especially at the far end of the x-axis with heavier engines and lower miles per gallon?
+
+-   Are there confounding variables, such the size of the engine, referred to as displacement, independent of weight, that better predicts the miles per gallon?
+
+By creating a scatterplot, we already start to imply a relationship.
+
+But which line or estimator should we use?
+
+The most common way to do simple linear regression is through partial least squares estimation, also called ordinary least squares estimation, but options exist:
+
+-   Ordinary Least Squares (OLS)
+
+-   Median Absolute Deviation (MAD)
+
+-   Least Median Squares (LMS)
+
+-   Theil-Sen
+
+### Neat closed-form equations:
+
+in the case of simple linear regression for an ordinary least squares estimate, meaning regression with only one independent and one dependent variable, the slope and intercept follow neat closed-form equations:
+
+![](images/clipboard-3549928179.png){width="152"}
+
+![](images/clipboard-3003394162.png){width="153" height="51"}
+
+```{r}
+r_slope <- ( sd(mtcars$mpg) / sd(mtcars$wt) ) * cor(mtcars$mpg, mtcars$wt)
+r_intercept <- mean(mtcars$mpg) - r_slope * mean(mtcars$wt)
+```
+
+We can see that the r-intercept, by which we mean the y-intercept for when x is zero, is 37.285. We also see that the r-slope is -5.344, meaning that the line moves downward -5.344 units for every one unit along the x-axis.
+
+### **Creating Our Model Object**
+
+#### Conventional way:
+
+```{r}
+mtcars_lm_mpg_wt <- lm(mpg ~ wt, data = mtcars)
+summary(mtcars_lm_mpg_wt )
+```
+
+#### Tidymodel way:
+
+```{r}
+options(scipen = 999)
+# Fit linear model
+mtcars_lm_mpg_wt <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(mpg ~ wt, data = mtcars)
+
+# Print the model
+mtcars_lm_mpg_wt
+```
+
+::: callout-note
+## Back stage - lm()
+
+Important to know that R will always use matrix algebra to calculate the slope of the ordinary least squares regression line even though simple closed-form equations exist to find the slope. This is because the linear algebra will give us a more exact number than the closed form equations because of the thing about squaring the numbers.
+:::
