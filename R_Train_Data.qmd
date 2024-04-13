@@ -2,10 +2,4 @@
 title: "R_Train_Data"
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-```{r}
-1 + 1
-```
+## 1. **Model Coefficients for Simple Linear Regression in R using mtcars**
