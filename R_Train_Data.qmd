@@ -3,3 +3,5 @@ title: "R_Train_Data"
 ---
 
 ## 1. **Model Coefficients for Simple Linear Regression in R using mtcars**
+
+[Ref:](https://medium.com/@josef.waples/introduction-to-linear-regression-in-r-b718077614a0)
